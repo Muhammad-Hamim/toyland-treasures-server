@@ -24,13 +24,22 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const galleryCollection = client
-      .db("ToylandTreasures")
-      .collection("gallery");
+    const galleryCollection = client.db("toyland").collection("gallery");
+    const toyCollection = client.db("toyland").collection("toys");
 
     app.get("/gallery", async (req, res) => {
       const cursor = galleryCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/toys", async (req, res) => {
+      const cursor = toyCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.post("/toys", async (req, res) => {
+      const toys = req.body;
+      const result = await toyCollection.insertOne(toys);
       res.send(result);
     });
 
@@ -41,7 +50,7 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
