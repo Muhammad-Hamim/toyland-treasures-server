@@ -4,7 +4,6 @@ require("dotenv").config();
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
-
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -22,7 +21,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const galleryCollection = client.db("toyland").collection("gallery");
     const toyCollection = client.db("toyland").collection("toys");
