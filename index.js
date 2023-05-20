@@ -25,9 +25,15 @@ async function run() {
 
     const galleryCollection = client.db("toyland").collection("gallery");
     const toyCollection = client.db("toyland").collection("toys");
+    const testimonialCollection = client.db("toyland").collection("testimonials");
 
     app.get("/gallery", async (req, res) => {
       const cursor = galleryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/testimonials", async (req, res) => {
+      const cursor = testimonialCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -57,6 +63,11 @@ async function run() {
       const result = await toyCollection.insertOne(toys);
       res.send(result);
     });
+    app.post("/testimonials", async (req, res) => {
+      const testimonial = req.body;
+      const result = await testimonialCollection.insertOne(testimonial);
+      res.send(result);
+    });
     app.put("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -75,11 +86,16 @@ async function run() {
           availability: updatedToys.availability,
         },
       };
-      console.log(toys)
       const result = await toyCollection.updateOne(query, toys, options);
       res.send(result);
     });
 
+    app.delete("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.deleteOne(query);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
