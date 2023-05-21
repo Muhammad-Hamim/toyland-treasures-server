@@ -47,6 +47,12 @@ async function run() {
         if (req.query?.email) {
           query = { sellerEmail: req.query.email };
         }
+        if (req.query?.toyName) {
+          query = {
+            ...query,
+            toyName: { $regex: req.query.toyName, $options: "i" },
+          };
+        }
 
         const sortField = req.query.sortField || "price";
         const sortOrder = req.query.sortOrder === "descending" ? -1 : 1;
@@ -61,6 +67,7 @@ async function run() {
         res.status(500).json({ error: "Internal server error" });
       }
     });
+
 
     app.get("/toys", async (req, res) => {
       let query = {};
