@@ -25,7 +25,9 @@ async function run() {
 
     const galleryCollection = client.db("toyland").collection("gallery");
     const toyCollection = client.db("toyland").collection("toys");
-    const testimonialCollection = client.db("toyland").collection("testimonials");
+    const testimonialCollection = client
+      .db("toyland")
+      .collection("testimonials");
 
     app.get("/gallery", async (req, res) => {
       const cursor = galleryCollection.find();
@@ -37,6 +39,29 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    // ascendeing or descending
+
+    app.get("/toys", async (req, res) => {
+      try {
+        let query = {};
+        if (req.query?.email) {
+          query = { sellerEmail: req.query.email };
+        }
+
+        const sortField = req.query.sortField || "price";
+        const sortOrder = req.query.sortOrder === "descending" ? -1 : 1;
+
+        const result = await toyCollection
+          .find(query)
+          .sort({ [sortField]: sortOrder })
+          .toArray();
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+      }
+    });
+
     app.get("/toys", async (req, res) => {
       let query = {};
       if (req.query?.email) {
